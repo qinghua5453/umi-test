@@ -6,12 +6,9 @@ function Layout(props) {
   useEffect(() => {
     console.log('useEffect--base');
   }, []);
-  const { menuItem, setMenuItem} = useContext(BaseContext);
-  return (
-    <div>
-      base
-    </div>
-  );
+
+  const { menuItem, setMenuItem } = useContext(BaseContext);
+  return <div>base</div>;
 }
 
 export default Layout;

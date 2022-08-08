@@ -18,4 +18,5 @@ const FormCmp = () => {
   return 'form';
 };
 console.log(1);
+console.log(2);
 export default FormCmp;

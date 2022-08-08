@@ -57,6 +57,19 @@ function Cycle() {
     { key: 1, name: 'tab1' },
     { key: 2, name: 'tab2' },
   ];
+
+  const [obj, setObj] = useState({});
+  const { arr } = obj;
+  const [test, setTest] = useState({});
+
+  console.log('test', test);
+  useEffect(() => {
+    setTest((pre) => ({
+      ...pre,
+      arr,
+    }));
+  }, [arr]);
+
   const [current, setCurrent] = useState(1);
   return (
     <div>

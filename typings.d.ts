@@ -8,3 +8,7 @@ declare module '*.svg' {
   const url: string;
   export default url;
 }
+
+declare module 'three';
+declare module 'dat.gui';
+declare module 'react-flow-renderer';

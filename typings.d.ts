@@ -12,3 +12,4 @@ declare module '*.svg' {
 declare module 'three';
 declare module 'dat.gui';
 declare module 'react-flow-renderer';
+declare module 'reactflow';

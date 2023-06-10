@@ -170,7 +170,7 @@ const App = () => {
               row: DraggableTableRow,
             },
           }}
-          rowKey={(record) => record.key}
+          rowKey={(record) => record.id}
           onRow={(record, index) => {
             return {
               index,

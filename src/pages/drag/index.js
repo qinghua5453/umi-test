@@ -8,22 +8,13 @@ import { tableData, columns } from './mock';
 import { useState, useCallback, useRef, useEffect } from 'react';
 import { getParam, buildStandardArr } from './utils';
 
-const DraggableTableRow = ({
-  index,
-  dataSource,
-  record,
-  parentId,
-  parentIndex,
-  updateRow,
-  ...restProps
-}) => {
+const DraggableTableRow = ({ index, record, updateRow, ...restProps }) => {
   const ref = useRef(null);
 
   const itemObj = {
     id: record.id,
     index,
   };
-  let dropPosition;
 
   const [{ handlerId }, drop] = useDrop({
     accept: 'table-row',
@@ -61,33 +52,12 @@ const DraggableTableRow = ({
         return;
       }
 
-      // 拖拽对象在目标对象上方
-      if (hoverClientY < hoverMiddleY) {
-        console.log('上方');
-        dropPosition = -1;
-      }
-      // 拖拽对象在目标对象下方
-      else if (
-        hoverClientY >
-        hoverBoundingRect.bottom - hoverBoundingRect.top - hoverMiddleY
-      ) {
-        console.log('下方');
-        dropPosition = 1;
-      }
-      // 拖拽对象在目标对象的缝隙处
-      else {
-        console.log('间隙');
-        dropPosition = 0;
-      }
-      let dropPosition;
-
       const opt = {
         dragId: item.id, // 拖拽id
         dropId: record.id, // 要放置位置行的id
         dropParentId: record.parentId,
         dragKey: record.dragKey,
         dropKey: record.dropKey,
-        dropPosition,
       };
       console.log('opt', opt);
       item.index = hoverIndex;
@@ -99,7 +69,6 @@ const DraggableTableRow = ({
         dropParentId: record.parentId,
         dragKey: record.dragKey,
         dropKey: record.dropKey,
-        dropPosition,
       };
       updateRow(opt);
     },
@@ -124,69 +93,69 @@ const App = () => {
   const [dataSource, setDataSource] = useState(tableData); // 设置你的数据源
 
   const updateRow = (opt) => {
-    const { dragId, dropId, dropPosition } = opt;
+    const { dragId, dropId } = opt;
     const params = getParam(dataSource, dragId, dropId);
     const { dragKey, dropKey, dragRow, dropRow } = params;
-    const newData = [...dataSource];
+    console.log('params', params);
 
-    function findParent(data, parentId, parent) {
+    const data = [...dataSource];
+    if (dragKey === dropKey) return;
+    const loop = (data, key, callback) => {
       for (let i = 0; i < data.length; i++) {
-        const item = data[i];
-
-        if (item.id === parentId) {
-          return parent;
+        if (data[i].key === key) {
+          return callback(data[i], i, data);
         }
-
-        if (item.children && item.children.length > 0) {
-          const parent = findParent(item.children, parentId, item); // 递归查找子元素的父级元素
-          if (parent) {
-            return parent; // 如果找到了父级元素，立即返回
-          }
+        if (data[i].children) {
+          loop(data[i].children, key, callback);
         }
       }
+    };
 
-      return null; // 没有找到父级元素，返回 null
+    let dragObj;
+    loop(data, dragKey, (item, index, arr) => {
+      arr.splice(index, 1);
+      dragObj = item;
+    });
+
+    // if (Array.isArray(dropRow.children)) {
+    //   console.log('进去了')
+    //   dropRow.children.unshift(dragObj);
+    // } else {
+    //   let ar = [];
+    //   let i;
+    //   loop(data, dropKey, (_item, index, arr) => {
+    //     ar = arr;
+    //     i = index;
+    //   });
+    //   const dragKeyArr = dragKey.split('-');
+    //   const dropKeyArr = dropKey.split('-');
+    //   const dropPosition = dragKeyArr[dragKeyArr.length - 1] - dropKeyArr[dropKeyArr.length - 1];
+    //   // 同级 相邻node拖拽分情况
+    //   if (dropPosition === -1) {
+    //     ar.splice(i + 1, 0, dragObj);
+    //   } else {
+    //     ar.splice(i, 0, dragObj);
+    //   }
+    //   console.log('ar', ar);
+    // }
+    let ar = [];
+    let i;
+    loop(data, dropKey, (_item, index, arr) => {
+      ar = arr;
+      i = index;
+    });
+    const dragKeyArr = dragKey.split('-');
+    const dropKeyArr = dropKey.split('-');
+    const dropPosition =
+      dragKeyArr[dragKeyArr.length - 1] - dropKeyArr[dropKeyArr.length - 1];
+    // 同级 相邻node拖拽分情况
+    if (dropPosition === -1) {
+      ar.splice(i + 1, 0, dragObj);
+    } else {
+      ar.splice(i, 0, dragObj);
     }
-
-    function traverse(data, dragId, dropId, dragLevel, dropLevel) {
-      for (let i = 0; i < data.length; i++) {
-        const item = data[i];
-        if (item.id === dragId) {
-          data.splice(i, 1); // 从原位置删除拖拽元素
-          if (dragLevel === dropLevel) {
-            // 同级拖拽
-            const insertIndex = data.findIndex((row) => row.id === dropId); // 找到目标位置的索引
-            data.splice(insertIndex, 0, item);
-          } else if (dragLevel < dropLevel) {
-            // 向上跨级拖拽
-            const parent = findParent(data, dropId); // 找到目标位置的父级元素
-            if (parent && !parent.children) {
-              parent.children = [];
-            }
-            parent.children.unshift(item);
-          } else {
-            // 向下跨级拖拽
-            if (!item.children) {
-              item.children = [];
-            }
-            const parent = findParent(data, dropId); // 找到目标位置的父级元素
-            if (parent) {
-              parent.children.push(item);
-            }
-          }
-
-          // 结束递归
-          return;
-        }
-
-        if (item.children && item.children.length > 0) {
-          traverse(item.children, dragId, dropId, dragLevel, dropLevel); // 递归遍历子元素
-        }
-      }
-    }
-    traverse(newData, dragRow.id, dropRow.id, dragRow.level, dropRow.level);
-
-    setDataSource(newData);
+    console.log('ar', ar);
+    setDataSource(data);
   };
 
   console.log('dataSource', dataSource);
@@ -201,14 +170,11 @@ const App = () => {
               row: DraggableTableRow,
             },
           }}
-          rowKey={(record) => record.id}
+          rowKey={(record) => record.key}
           onRow={(record, index) => {
             return {
               index,
-              dataSource,
               record,
-              parentId: 0,
-              parentIndex: 0,
               updateRow,
             };
           }}

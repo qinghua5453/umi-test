@@ -1,12 +1,19 @@
-const buildMapDataSource = (dataSource, target = {}, level = 1) => {
+const buildMapDataSource = (
+  dataSource,
+  target = {},
+  level = 1,
+  parentKey = null,
+) => {
   for (let i = 0; i < dataSource.length; i++) {
     const item = dataSource[i];
+    let key = !parentKey ? `${i}` : `${parentKey}-${i}`;
     if (!target[item.id]) {
       target[item.id] = item;
       item.level = level;
+      item.key = key;
     }
     if (Array.isArray(item?.children)) {
-      buildMapDataSource(item.children, target, level + 1);
+      buildMapDataSource(item.children, target, level + 1, key);
     }
   }
   return target;

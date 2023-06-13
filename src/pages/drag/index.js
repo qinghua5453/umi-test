@@ -6,7 +6,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { Table } from 'antd';
 import { tableData, columns } from './mock';
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { getParam, buildStandardArr } from './utils';
+import { getParam, buildStandardArr, getParent } from './utils';
 
 const DraggableTableRow = ({ index, record, updateRow, ...restProps }) => {
   const ref = useRef(null);
@@ -96,6 +96,8 @@ const App = () => {
     const { dragId, dropId } = opt;
     const params = getParam(dataSource, dragId, dropId);
     const { dragKey, dropKey, dragRow, dropRow } = params;
+    const parent = getParent(dataSource, dragRow.parentId);
+    console.log('parent', parent);
     console.log('params', params);
 
     const data = [...dataSource];

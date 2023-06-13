@@ -1,3 +1,4 @@
+/* eslint-disable no-debugger */
 const buildMapDataSource = (
   dataSource,
   target = {},
@@ -51,4 +52,21 @@ export const buildStandardArr = (
     newData.push(item);
   }
   return newData;
+};
+
+export const getParent = (data, parentId = null, parent = null) => {
+  for (let i = 0; i < data.length; i++) {
+    const item = data[i];
+    debugger;
+    if (item.parentId === parentId) {
+      return parent;
+    }
+    if (Array.isArray(item?.children) && item.children.length) {
+      const parent = getParent(item.children, parentId, item);
+      if (parent) {
+        return parent;
+      }
+    }
+  }
+  return null;
 };

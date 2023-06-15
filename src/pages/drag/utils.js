@@ -57,7 +57,6 @@ export const buildStandardArr = (
 export const getParent = (data, parentId = null, parent = null) => {
   for (let i = 0; i < data.length; i++) {
     const item = data[i];
-    debugger;
     if (item.parentId === parentId) {
       return parent;
     }
@@ -69,4 +68,18 @@ export const getParent = (data, parentId = null, parent = null) => {
     }
   }
   return null;
+};
+
+// 将多维打成一维
+export const buildManyArr = (data) => {
+  let result = [];
+  for (let i = 0; i < data.length; i++) {
+    const item = data[i];
+    let children = [];
+    if (item.children) {
+      children = buildManyArr(item.children);
+    }
+    result = result.concat([item], children);
+  }
+  return result;
 };

@@ -6,7 +6,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { Table } from 'antd';
 import { tableData, columns } from './mock';
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { getParam, buildStandardArr, getParent } from './utils';
+import { getParam, buildStandardArr, getParent, buildManyArr } from './utils';
 
 const DraggableTableRow = ({ index, record, updateRow, ...restProps }) => {
   const ref = useRef(null);
@@ -92,6 +92,8 @@ const DraggableTableRow = ({ index, record, updateRow, ...restProps }) => {
 const App = () => {
   const [dataSource, setDataSource] = useState(tableData); // 设置你的数据源
 
+  const res = buildManyArr(tableData);
+  console.log('res', res);
   const updateRow = (opt) => {
     const { dragId, dropId } = opt;
     const params = getParam(dataSource, dragId, dropId);

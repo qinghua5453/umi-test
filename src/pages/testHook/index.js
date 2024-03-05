@@ -2,14 +2,17 @@ import React, { useEffect, useState } from 'react';
 import useMapping from './aHook.js';
 
 function TestHook() {
-  const [min, setMin] = useState(0);
-  const { count } = useMapping({ min });
+  const [config, setConfig] = useState({ min: 0 });
+  const { count } = useMapping(config);
+
+  // console.log('count1111', count);
+  // console.log('config----', config);
 
   useEffect(() => {
     console.log('count', count);
-  }, [min, count]);
+  }, [config, count]);
 
-  const buttonClick = () => setMin(min + 1);
+  const buttonClick = () => setConfig({ min: config.min + 1 });
   return (
     <div>
       TestHook

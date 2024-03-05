@@ -1,6 +1,7 @@
+/* eslint-disable no-debugger */
 import React, { useState, useEffect } from 'react';
 
-const useMapping = ({ min }) => {
+const useMapping = (config) => {
   const [count, setCount] = useState(1);
 
   const initCount = () => {
@@ -8,8 +9,9 @@ const useMapping = ({ min }) => {
   };
 
   useEffect(() => {
+    // debugger
     setTimeout(initCount, 2000);
-  }, [min]);
+  }, [config]);
 
   return {
     count,

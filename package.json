@@ -23,6 +23,7 @@
     "@ant-design/pro-layout": "^6.5.0",
     "@three-ts/orbit-controls": "^1.4.7",
     "antd": "^4.24.15",
+    "d3": "^7.9.0",
     "dat.gui": "^0.7.9",
     "immutability-helper": "^3.1.1",
     "react": "^18.2.0",
@@ -31,10 +32,10 @@
     "react-dom": "17.x",
     "react-flow-renderer": "^9.7.1",
     "react-resizable": "^3.0.4",
-    "reactflow": "^11.7.2",
     "three": "^0.152.2",
     "umi": "^3.5.14",
-    "use-http": "^1.0.24"
+    "use-http": "^1.0.24",
+    "reactflow": "^11.9.4"
   },
   "devDependencies": {
     "@types/react": "^17.0.0",

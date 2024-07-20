@@ -5,10 +5,10 @@ import TestCmp from './cmp';
 
 function ArrTest() {
   const arr = [
-    {
-      id: 1,
-      parentId: null,
-    },
+    // {
+    //   id: 1,
+    //   parentId: null,
+    // },
     {
       id: 2,
       parentId: 1,
@@ -83,15 +83,49 @@ function ArrTest() {
     console.log('map', map);
 
     // 递归函数，计算子集数量
+    // 错误写法
+    // const countChildren = (id) => {
+    //   let count = 0;
+    //   if (map[id]) {
+    //     for ( const childId of map[id]) {
+    //       let tmp = 0;
+    //       if (map[childId].length) {
+    //         tmp = countChildren(childId)
+    //       }
+    //         count = map[id].length + tmp
+    //     }
+    //   }
+    //   return count;
+    // };
+
+    // 正确写法
     const countChildren = (id) => {
-      let count = 1; // 包括自身
+      let count = 0;
       if (map[id]) {
+        let tmp = 0;
         for (const childId of map[id]) {
-          count += countChildren(childId);
+          if (map[childId].length) {
+            tmp = countChildren(childId);
+          }
         }
+        count = map[id].length + tmp;
       }
       return count;
     };
+
+    //  最佳写法
+    //   const countChildren = (id) => {
+    //     if (!map[id]) return 0; // 如果没有子节点，返回 0
+
+    //     let count = map[id].length; // 先获取当前节点的子节点数量
+
+    //     // 递归计算每个子节点的子集数量
+    //     for (const childId of map[id]) {
+    //         count += countChildren(childId);
+    //     }
+
+    //     return count;
+    // };
 
     // 遍历每个节点，计算子集数量
     for (const item of data) {
